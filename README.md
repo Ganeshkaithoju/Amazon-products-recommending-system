@@ -1,74 +1,48 @@
-# Product Recommendation System (Content-Based)
+# Product Recommendation System
 
-A simple Streamlit app that recommends similar Amazon products.
-Pick a product from the dropdown, click **Recommend**, and it shows the 5 most similar products.
+A simple web app that suggests similar Amazon products. Pick a product from the dropdown, click **Recommend**, and get the 5 closest matches with their price, rating, similarity score and a link to the product page.
 
-**Dataset:** Amazon Sales Dataset (Kaggle) - https://www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset
-(1,465 rows -> 1,337 unique products after removing repeats)
+**Live demo:** <your-deployed-url>
 
 ## How it works
 
-1. Text = product name + category + description
-2. Clean it: lowercase, remove punctuation/special characters, remove stopwords, missing values -> empty string
-3. TF-IDF (`max_features=5000`, `ngram_range=(1, 2)`)
-4. Cosine similarity between the selected product and all other products
-5. Show the top 5
+This is a **content-based** recommender. It compares what products are *about*, not what other users bought.
 
-## Files
+1. **Text:** the product name, category and description are joined into one text per product.
+2. **Cleaning:** lowercase, remove punctuation and special characters, remove stopwords.
+3. **TF-IDF:** each product becomes a vector of weighted words and word pairs (up to 5,000 features), so distinctive words count more than common ones.
+4. **Cosine similarity:** the selected product is compared with every other product, and the highest scores are shown.
 
+Example: picking a Prestige electric kettle returns other Prestige kettles first, then similar kettles from other brands.
 
-| File                          | What it is                                                            |
-| ------------------------------- | ----------------------------------------------------------------------- |
-| `assignment20_recommender.py` | data loading, cleaning, TF-IDF, similarity, `recommend()` (Tasks 1-5) |
-| `app.py`                      | Streamlit app (Task 6)                                                |
-| `products_clean.csv`          | cleaned text, created by the script above, used by the app            |
-| `requirements.txt`            | libraries for deployment                                              |
+## Dataset
 
-## Run on your computer
+[Amazon Sales Dataset](https://www.kaggle.com/datasets/karkavelrajaj/amazon-sales-dataset) from Kaggle. After removing repeated products, about 1,300 unique products are used.
+
+## Tech stack
+
+Python, pandas, scikit-learn, Streamlit
+
+## Run locally
 
 ```bash
+git clone https://github.com/<your-username>/<your-repo>.git
+cd <your-repo>
 pip install -r requirements.txt
-python assignment20_recommender.py      # only needed to re-create products_clean.csv (needs amazon.csv)
 streamlit run app.py
 ```
 
-## Push to GitHub (Task 7)
+The app opens at http://localhost:8501.
 
-Create an EMPTY repo on github.com (no README), then in this folder:
+## Project files
 
-```bash
-git init
-git add .
-git commit -m "product recommender: pipeline + streamlit app"
-git branch -M main
-git remote add origin https://github.com/<your-username>/product-recommender.git
-git push -u origin main
-```
+| File | Purpose |
+|---|---|
+| `app.py` | Streamlit app |
+| `products_clean.csv` | Cleaned product text used by the app |
+| `requirements.txt` | Python dependencies |
 
-(GitHub does not accept the account password on push, use a Personal Access Token or GitHub CLI / Desktop.)
+## Limitations
 
-## Deploy on Render (Task 8)
-
-1. Sign up on https://render.com with GitHub
-2. **New +** -> **Web Service** -> pick the `product-recommender` repo
-3. Settings:
-   - Runtime: **Python 3**
-   - Branch: `main`
-   - Build Command: `pip install -r requirements.txt`
-   - Start Command: `streamlit run app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true`
-   - Instance type: **Free**
-4. Environment variable (recommended): `PYTHON_VERSION` = `3.11.9`
-5. **Create Web Service**, wait for the build, open the `https://....onrender.com` link
-
-Free instances sleep when idle, so the first open can take about a minute. Every `git push` to `main` re-deploys.
-
-## Final validation (Task 9)
-
-- [ ]  Deployed page opens and the dropdown has ~1,337 products
-- [ ]  Pick a Wayona cable -> other Wayona cables at the top
-- [ ]  Pick a Prestige kettle -> other electric kettles
-- [ ]  Pick a boAt Bassheads earphone -> other boAt earphones
-- [ ]  Results match the output of `assignment20_recommender.py`
-
-**Deployed URL:** _paste here_
-**GitHub repo:** _paste here_
+- Product names are part of the text, so results lean towards the same brand or model.
+- Recommendations come only from text, so price and rating do not affect them.
