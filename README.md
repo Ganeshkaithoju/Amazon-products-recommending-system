@@ -2,7 +2,7 @@
 
 A simple web app that suggests similar Amazon products. Pick a product from the dropdown, click **Recommend**, and get the 5 closest matches with their price, rating, similarity score and a link to the product page.
 
-**Live demo:** <your-deployed-url>
+**Live demo:** https://amazon-products-recommending-system.onrender.com/
 
 ## How it works
 
